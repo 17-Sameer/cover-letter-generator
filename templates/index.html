@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cover Letter Generator</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+    background: #f9f9f9;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  label {
+    display: block;
+    margin: 12px 0 6px;
+    font-weight: 600;
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    font-size: 1rem;
+    resize: vertical;
+  }
+  textarea {
+    min-height: 100px;
+  }
+  button {
+    margin-top: 20px;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #0069ff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover:not(:disabled) {
+    background-color: #0051cc;
+  }
+  button:disabled {
+    background-color: #a3c0ff;
+    cursor: not-allowed;
+  }
+  .output-container {
+    margin-top: 30px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 7px rgba(0,0,0,0.1);
+    padding: 20px;
+    white-space: pre-wrap;
+    font-family: 'Georgia', serif;
+    line-height: 1.5;
+    font-size: 1.1rem;
+  }
+  .loading-spinner {
+    margin: 20px auto;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #0069ff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<h1>AI Cover Letter Generator</h1>
+
+<label for="jobTitle">Job Title</label>
+<input type="text" id="jobTitle" placeholder="e.g. Software Developer" />
+
+<label for="company">Company</label>
+<input type="text" id="company" placeholder="e.g. Google" />
+
+<label for="resumeSummary">Resume Summary</label>
+<textarea id="resumeSummary" placeholder="Briefly describe your skills and experience"></textarea>
+
+<button id="generateBtn">Generate Cover Letter</button>
+
+<div id="loading" style="display:none;">
+  <div class="loading-spinner"></div>
+  <p style="text-align:center;">Generating your cover letter...</p>
+</div>
+
+<div id="output" class="output-container" style="display:none;"></div>
+
+<script>
+  const generateBtn = document.getElementById('generateBtn');
+  const loadingEl = document.getElementById('loading');
+  const outputEl = document.getElementById('output');
+
+  generateBtn.addEventListener('click', async () => {
+    const jobTitle = document.getElementById('jobTitle').value.trim();
+    const company = document.getElementById('company').value.trim();
+    const resumeSummary = document.getElementById('resumeSummary').value.trim();
+
+    if (!jobTitle || !company || !resumeSummary) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    // Show loading spinner and hide output
+    loadingEl.style.display = 'block';
+    outputEl.style.display = 'none';
+    generateBtn.disabled = true;
+
+    try {
+      const response = await fetch('/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jobTitle, company, resumeSummary }),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        outputEl.textContent = data.coverLetter;
+      } else {
+        outputEl.textContent = `Error: ${data.error || 'Unknown error'}`;
+      }
+    } catch (error) {
+      outputEl.textContent = 'Error: Could not reach server.';
+    }
+
+    // Hide loading spinner and show output
+    loadingEl.style.display = 'none';
+    outputEl.style.display = 'block';
+    generateBtn.disabled = false;
+  });
+</script>
+
+</body>
+</html>
