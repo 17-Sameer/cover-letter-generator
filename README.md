@@ -1,4 +1,4 @@
-Created this AI Cover Letter Generator as a first AI and HTML project, to learn and get experience with AI. User inputs The Job title and Company, as well as a short resume summary, then they can generate the cover letter
+Created this AI Cover Letter Generator as a first AI and HTML project, to learn and get experience with AI. User inputs The Job title and Company, as well as a short resume summary, then they can generate the cover letter.
 
 Using Python as backend :
 Flask → to run the web server and handle requests (from flask import Flask, request, jsonify, render_template)
